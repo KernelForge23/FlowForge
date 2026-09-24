@@ -1,0 +1,8 @@
+# FlowForge
+
+Read AGENTS.md first. Then agent_docs/project_brief.md, agent_docs/tech_stack.md, and agent_docs/testing.md.
+
+Product: modular Trigger → Condition → Action automation for developers.
+Stack: React + Vite frontend, FastAPI OOP engine, Supabase Postgres/Auth, Vercel + Render.
+V1: no in-product AI.
+Docs: docs/PRD-FlowForge-MVP.md, docs/TechDesign-FlowForge-MVP.md, docs/Research-FlowForge.md.

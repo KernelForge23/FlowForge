@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "templateVersion": "0.3.0",
+  "mode": "guided",
+  "tools": [
+    "claude",
+    "cursor",
+    "codex",
+    "gemini"
+  ],
+  "documents": {
+    "prd": "docs/PRD-FlowForge-MVP.md",
+    "techdesign": "docs/TechDesign-FlowForge-MVP.md"
+  }
+}

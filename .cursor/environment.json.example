@@ -1,0 +1,9 @@
+{
+  "install": "npm create vite@latest frontend -- --template react-ts && python -m venv .venv",
+  "terminals": [
+    {
+      "name": "dev",
+      "command": "npm run dev"
+    }
+  ]
+}

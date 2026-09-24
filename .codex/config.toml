@@ -1,0 +1,5 @@
+# Codex project config for FlowForge
+# Keep sandbox and approval settings conservative.
+# AGENTS.md is the source of truth. Skills live in .agents/skills/.
+
+# model left unset; use the Codex default unless the user pins a family
