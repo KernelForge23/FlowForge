@@ -4,10 +4,10 @@ Update this after major decisions, completed phases, or bugs that future agents 
 
 ## Current State
 
-- Current task: Phase 2 complete — backend workflow engine and manual execution path
-- Current phase: Workflow Engine (Week 2 done)
-- Next step: Week 3 — frontend workflow surfaces plus SSRF-safe HTTP/GitHub integrations
-- Blocked by: none
+- Current task: Final MVP verification and deployment
+- Current phase: Week 4 refinement complete; deployment smoke test pending
+- Next step: Configure production Supabase/Postgres, Render, and Vercel values and run the deployed smoke test
+- Blocked by: deployment access and production environment values are user-supplied
 
 ## Decisions
 
@@ -18,6 +18,8 @@ Update this after major decisions, completed phases, or bugs that future agents 
 - 2026-09-23 AI coding tools: Claude Code, Cursor, Codex, Gemini/Antigravity legacy
 - 2026-10-03 Phase 1 uses SQLite locally (`DATABASE_URL`); SQLAlchemy models stay Postgres-ready. Auth and live Supabase deferred.
 - 2026-10-06 Phase 2 hydrates persisted workflow configuration through factories, evaluates trigger/condition objects in `WorkflowEngine`, and records manual executions. Week 2 actions are deterministic `NoOpAction`; network integrations are deferred to Week 3.
+- 2026-10-06 Week 3 adds SSRF-guarded HTTP actions, GitHub dispatch actions, GitHub webhook dispatch, CORS for local frontend development, and a React workflow dashboard with Supabase client login wiring. Backend ownership checks activate when Supabase is configured; local tests retain auth-disabled SQLite mode.
+- 2026-10-06 Final slice adds workflow CRUD/configuration APIs, frontend trigger/condition/action builder, deletion, disabled-workflow protection, signed GitHub webhooks, bounded HTTP retries, and deployment instructions.
 
 ## AI / Tooling Decisions
 
@@ -28,6 +30,7 @@ Update this after major decisions, completed phases, or bugs that future agents 
 - Render free-tier cold starts make reliable cron unrealistic in V1
 - Generic HTTP actions need SSRF protections from day one
 - SQLite JSON + string UUIDs; switch `DATABASE_URL` to Postgres before production
+- 2026-10-06 Debug: authenticated workflow creation failed because frontend API calls omitted the Supabase bearer token; fixed token propagation and local User synchronization.
 
 ## Completed
 
@@ -38,6 +41,6 @@ Update this after major decisions, completed phases, or bugs that future agents 
 - [x] Concrete trigger/condition/composite/action factories
 - [x] WorkflowEngine and execution records
 - [x] Workflow create/load/manual-run API path
-- [ ] Auth
-- [ ] Core MVP flow
+- [x] Auth
+- [x] Core MVP flow
 - [ ] Launch checks

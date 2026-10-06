@@ -71,3 +71,15 @@ def test_engine_executes_actions_in_order() -> None:
     assert result.action_count == 2
     assert len(first.calls) == 1
     assert len(second.calls) == 1
+
+
+def test_engine_preserves_safe_action_error() -> None:
+    class FailingAction:
+        def execute(self, _context: ExecutionContext) -> None:
+            raise RuntimeError("GitHub action returned status 403")
+
+    workflow = Workflow("manual", TriggerFactory.create("manual"), None, [FailingAction()])
+    result = WorkflowEngine().execute(workflow, Event(type="manual", source="manual"))
+
+    assert result.status is ExecutionStatus.FAILED
+    assert result.error == "GitHub action returned status 403"

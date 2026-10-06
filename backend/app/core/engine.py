@@ -32,10 +32,10 @@ class WorkflowEngine:
             for action in workflow.actions:
                 action.execute(context)
                 executed += 1
-        except Exception:
+        except Exception as exc:
             return EngineResult(
                 status=ExecutionStatus.FAILED,
                 action_count=executed,
-                error="Action execution failed",
+                error=str(exc) or "Action execution failed",
             )
         return EngineResult(status=ExecutionStatus.SUCCESS, action_count=executed)
