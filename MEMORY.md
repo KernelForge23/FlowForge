@@ -7,7 +7,7 @@ Update this after major decisions, completed phases, or bugs that future agents 
 - Current task: Final MVP verification and deployment
 - Current phase: Week 4 refinement complete; deployment smoke test pending
 - Next step: Configure production Supabase/Postgres, Render, and Vercel values and run the deployed smoke test
-- Blocked by: deployment access and production environment values are user-supplied
+- Blocked by: deployment access and production environment values are user-supplied; Render/Vercel/Supabase dashboard steps remain
 
 ## Decisions
 
@@ -46,3 +46,4 @@ Update this after major decisions, completed phases, or bugs that future agents 
 - [x] Auth
 - [x] Core MVP flow
 - [ ] Launch checks
+- [x] Added psycopg PostgreSQL driver and updated deployment runbook for Supabase production

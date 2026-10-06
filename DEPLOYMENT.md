@@ -23,11 +23,14 @@ EMAIL_API_KEY=<Resend API key>
 EMAIL_FROM=FlowForge <noreply@your-verified-domain.com>
 GOOGLE_CLIENT_ID=<Google OAuth web client ID>
 GOOGLE_CLIENT_SECRET=<Google OAuth web client secret>
-GOOGLE_REDIRECT_URI=http://localhost:8000/api/integrations/gmail/callback
+GOOGLE_REDIRECT_URI=https://<render-service>/api/integrations/gmail/callback
 TOKEN_ENCRYPTION_KEY=<Fernet key>
 ```
 
 Do not use the Supabase service-role key in the frontend or commit any credentials.
+`DATABASE_URL` must be a PostgreSQL URL. The backend includes `psycopg[binary]`
+for SQLAlchemy's PostgreSQL driver. If the database password contains special
+characters, URL-encode them before placing the password in the connection URL.
 The email API key must remain a backend-only environment variable. Verify the sender domain with Resend before testing delivery.
 For personal Gmail sending, configure the Google OAuth variables instead. Generate `TOKEN_ENCRYPTION_KEY` with `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`.
 
