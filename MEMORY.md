@@ -4,9 +4,9 @@ Update this after major decisions, completed phases, or bugs that future agents 
 
 ## Current State
 
-- Current task: Part 4 agent configuration for Cursor, Claude Code, Codex, and Gemini
-- Current phase: Foundation
-- Next step: After user approval, Week 1 slice — FastAPI layout, Postgres models, Trigger/Condition/Action abstractions
+- Current task: Phase 2 complete — backend workflow engine and manual execution path
+- Current phase: Workflow Engine (Week 2 done)
+- Next step: Week 3 — frontend workflow surfaces plus SSRF-safe HTTP/GitHub integrations
 - Blocked by: none
 
 ## Decisions
@@ -16,6 +16,8 @@ Update this after major decisions, completed phases, or bugs that future agents 
 - 2026-09-23 No in-product AI; HTTP action is the extensibility valve; schedule is best-effort
 - 2026-09-23 Product docs live under `docs/` (research, PRD, Tech Design)
 - 2026-09-23 AI coding tools: Claude Code, Cursor, Codex, Gemini/Antigravity legacy
+- 2026-10-03 Phase 1 uses SQLite locally (`DATABASE_URL`); SQLAlchemy models stay Postgres-ready. Auth and live Supabase deferred.
+- 2026-10-06 Phase 2 hydrates persisted workflow configuration through factories, evaluates trigger/condition objects in `WorkflowEngine`, and records manual executions. Week 2 actions are deterministic `NoOpAction`; network integrations are deferred to Week 3.
 
 ## AI / Tooling Decisions
 
@@ -25,12 +27,17 @@ Update this after major decisions, completed phases, or bugs that future agents 
 
 - Render free-tier cold starts make reliable cron unrealistic in V1
 - Generic HTTP actions need SSRF protections from day one
+- SQLite JSON + string UUIDs; switch `DATABASE_URL` to Postgres before production
 
 ## Completed
 
 - [x] Research, PRD, Tech Design
 - [x] Agent instruction files (Part 4)
-- [ ] Core data model
+- [x] Core data model (SQLAlchemy + SQLite `create_all`)
+- [x] Trigger / Condition / Action ABCs + Workflow composition (pytest)
+- [x] Concrete trigger/condition/composite/action factories
+- [x] WorkflowEngine and execution records
+- [x] Workflow create/load/manual-run API path
 - [ ] Auth
 - [ ] Core MVP flow
 - [ ] Launch checks
