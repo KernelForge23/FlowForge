@@ -8,6 +8,7 @@ from app.core.factories import ActionFactory, ConditionFactory, TriggerFactory
 from app.core.workflow import Workflow as RuntimeWorkflow
 from app.models import Execution, User, Workflow, WorkflowAction, WorkflowCondition, WorkflowTrigger
 from app.repositories.workflow import WorkflowRepository
+from app.services.gmail import GmailService
 from app.schemas.workflows import WorkflowCreate, WorkflowUpdate
 
 
@@ -98,7 +99,11 @@ class WorkflowService:
             ) if stored.conditions else None
         )
         actions = [
-            ActionFactory.create(row.action_type, row.config)
+            ActionFactory.create(
+                row.action_type,
+                row.config,
+                gmail_service=GmailService(self.session),
+            )
             for row in stored.actions
         ]
         return stored, RuntimeWorkflow(
@@ -118,7 +123,7 @@ class WorkflowService:
         stored, runtime = self.load_runtime(workflow_id)
         if not stored.enabled:
             raise ValueError("Workflow is disabled")
-        result = WorkflowEngine().execute(runtime, event)
+        result = WorkflowEngine().execute(runtime, event, user_id=stored.user_id)
         execution = Execution(
             workflow_id=stored.id,
             status=result.status.value,

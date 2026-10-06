@@ -1,7 +1,7 @@
 from collections.abc import Mapping
 from typing import Any
 
-from app.core.actions import Action, GitHubAction, HttpAction, NoOpAction
+from app.core.actions import Action, EmailAction, GitHubAction, HttpAction, NoOpAction
 from app.core.conditions import (
     AndCondition,
     Condition,
@@ -65,11 +65,17 @@ class ConditionFactory:
 
 class ActionFactory:
     @staticmethod
-    def create(action_type: str, config: Mapping[str, Any] | None = None) -> Action:
+    def create(
+        action_type: str,
+        config: Mapping[str, Any] | None = None,
+        gmail_service: Any = None,
+    ) -> Action:
         if action_type == "noop":
             return NoOpAction()
         if action_type == "http":
             return HttpAction(config or {})
         if action_type == "github":
             return GitHubAction(config or {})
+        if action_type == "email":
+            return EmailAction(config or {}, gmail_service=gmail_service)
         raise ValueError(f"Unsupported action type: {action_type}")

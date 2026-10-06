@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { api } from './services/api'
-import type { Component, Execution, Workflow, WorkflowDetail } from './services/api'
+import type { Component, Execution, GmailStatus, Workflow, WorkflowDetail } from './services/api'
 import { supabase } from './lib/supabase'
 
 const emptyComponent = (type: string): Component => ({ type, config: {} })
@@ -21,9 +21,14 @@ function App() {
   const [conditionValue, setConditionValue] = useState('')
   const [actionType, setActionType] = useState('noop')
   const [actionConfig, setActionConfig] = useState('{}')
+  const [emailTo, setEmailTo] = useState('')
+  const [emailSubject, setEmailSubject] = useState('')
+  const [emailText, setEmailText] = useState('')
+  const [emailHtml, setEmailHtml] = useState('')
   const [enabled, setEnabled] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [gmail, setGmail] = useState<GmailStatus>({ connected: false, email: null })
 
   useEffect(() => {
     if (!supabase) return
@@ -33,7 +38,23 @@ function App() {
   }, [])
 
   useEffect(() => {
+    const query = new URLSearchParams(window.location.search)
+    const gmailResult = query.get('gmail')
+    const detail = query.get('detail')
+    if (gmailResult === 'error') {
+      setError(detail ?? `Gmail connection failed (${query.get('reason') ?? 'unknown error'})`)
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+  }, [])
+
+  useEffect(() => {
     if (session?.user.id) void refreshWorkflows(session.user.id)
+  }, [session?.user.id])
+
+  useEffect(() => {
+    if (session?.user.id) {
+      void api.gmailStatus().then(setGmail).catch(() => setGmail({ connected: false, email: null }))
+    }
   }, [session?.user.id])
 
   async function refreshWorkflows(userId: string) {
@@ -69,6 +90,10 @@ function App() {
     const action = workflow?.actions[0] ?? emptyComponent('noop')
     setActionType(action.type)
     setActionConfig(JSON.stringify(action.config, null, 2))
+    setEmailTo(Array.isArray(action.config.to) ? action.config.to.filter((item): item is string => typeof item === 'string').join(', ') : '')
+    setEmailSubject(typeof action.config.subject === 'string' ? action.config.subject : '')
+    setEmailText(typeof action.config.text === 'string' ? action.config.text : '')
+    setEmailHtml(typeof action.config.html === 'string' ? action.config.html : '')
   }
 
   async function selectWorkflow(workflow: Workflow) {
@@ -85,14 +110,28 @@ function App() {
   async function saveWorkflow(event: FormEvent) {
     event.preventDefault()
     if (!session?.user.id || !name.trim()) return
-    let parsedAction: Record<string, unknown>
-    try {
-      const value: unknown = JSON.parse(actionConfig)
-      if (typeof value !== 'object' || value === null || Array.isArray(value)) throw new Error('Action config must be a JSON object')
-      parsedAction = value as Record<string, unknown>
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'Invalid action JSON')
-      return
+    let parsedAction: Record<string, unknown> = {}
+    if (actionType === 'email') {
+      const recipients = emailTo.split(',').map((item) => item.trim()).filter(Boolean)
+      if (recipients.length === 0 || !emailSubject.trim() || (!emailText.trim() && !emailHtml.trim())) {
+        setError('Email requires recipients, a subject, and text or HTML content')
+        return
+      }
+      parsedAction = {
+        to: recipients,
+        subject: emailSubject.trim(),
+        ...(emailText ? { text: emailText } : {}),
+        ...(emailHtml ? { html: emailHtml } : {}),
+      }
+    } else {
+      try {
+        const value: unknown = JSON.parse(actionConfig)
+        if (typeof value !== 'object' || value === null || Array.isArray(value)) throw new Error('Action config must be a JSON object')
+        parsedAction = value as Record<string, unknown>
+      } catch (caught) {
+        setError(caught instanceof Error ? caught.message : 'Invalid action JSON')
+        return
+      }
     }
     const conditions = condition
       ? [{ type: condition.type, config: { field: conditionField, value: conditionValue } }]
@@ -151,6 +190,30 @@ function App() {
     }
   }
 
+  async function disconnectGmail() {
+    setBusy(true)
+    try {
+      await api.disconnectGmail()
+      setGmail({ connected: false, email: null })
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Could not disconnect Gmail')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function connectGmail() {
+    setBusy(true)
+    setError(null)
+    try {
+      const response = await api.connectGmail()
+      window.location.href = response.authorization_url
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Could not start Gmail connection')
+      setBusy(false)
+    }
+  }
+
   if (!session) {
     return (
       <main className="auth-shell">
@@ -177,6 +240,12 @@ function App() {
       </header>
       <section className="content">
         <div className="page-heading"><p className="eyebrow">WORKFLOWS</p><h1>Your automations</h1></div>
+        <section className="card">
+          <div className="detail-heading">
+            <div><h2>Gmail connection</h2><p className="muted">{gmail.connected ? `Connected as ${gmail.email}` : 'Connect Gmail to send email actions from your account.'}</p></div>
+            {gmail.connected ? <button className="secondary" onClick={() => void disconnectGmail()} disabled={busy}>Disconnect</button> : <button onClick={() => void connectGmail()} disabled={busy}>Connect Gmail</button>}
+          </div>
+        </section>
         <div className="grid">
           <section className="card">
             <h2>{selected ? 'Edit workflow' : 'Create workflow'}</h2>
@@ -186,8 +255,8 @@ function App() {
               <label className="checkbox"><input type="checkbox" checked={enabled} onChange={(event) => setEnabled(event.target.checked)} /> Enabled</label>
               <label>Condition<select value={condition?.type ?? ''} onChange={(event) => setCondition(event.target.value ? emptyComponent(event.target.value) : null)}><option value="">No condition</option><option value="equals">Equals</option><option value="contains">Contains</option><option value="not_equals">Not equals</option></select></label>
               {condition && <div className="two-col"><input placeholder="Payload field" value={conditionField} onChange={(event) => setConditionField(event.target.value)} /><input placeholder="Expected value" value={conditionValue} onChange={(event) => setConditionValue(event.target.value)} /></div>}
-              <label>Action<select value={actionType} onChange={(event) => setActionType(event.target.value)}><option value="noop">No-op</option><option value="http">HTTP request</option><option value="github">GitHub dispatch</option></select></label>
-              {actionType !== 'noop' && <label>Action configuration (JSON)<textarea rows={5} value={actionConfig} onChange={(event) => setActionConfig(event.target.value)} /></label>}
+              <label>Action<select value={actionType} onChange={(event) => setActionType(event.target.value)}><option value="noop">No-op</option><option value="http">HTTP request</option><option value="github">GitHub dispatch</option><option value="email">Email</option></select></label>
+              {actionType === 'email' ? <><p className="muted">{gmail.connected ? `Sends from ${gmail.email}` : 'Connect Gmail before running this action.'}</p><label>Recipients (comma-separated)<input type="text" placeholder="you@example.com" value={emailTo} onChange={(event) => setEmailTo(event.target.value)} /></label><label>Subject<input type="text" value={emailSubject} onChange={(event) => setEmailSubject(event.target.value)} /></label><label>Text body<textarea rows={4} value={emailText} onChange={(event) => setEmailText(event.target.value)} /></label><label>HTML body (optional)<textarea rows={4} value={emailHtml} onChange={(event) => setEmailHtml(event.target.value)} /></label></> : actionType !== 'noop' && <label>Action configuration (JSON)<textarea rows={5} value={actionConfig} onChange={(event) => setActionConfig(event.target.value)} /></label>}
               <div className="button-row"><button disabled={busy}>{busy ? 'Saving…' : selected ? 'Save changes' : 'Create workflow'}</button>{selected && <><button type="button" className="secondary" onClick={() => loadBuilder(null)}>Cancel</button><button type="button" className="danger" onClick={() => void deleteWorkflow()}>Delete</button></>}</div>
             </form>
             <div className="workflow-list">

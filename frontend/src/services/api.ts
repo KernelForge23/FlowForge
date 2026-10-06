@@ -27,6 +27,15 @@ export type Execution = {
   error: string | null
 }
 
+export type GmailStatus = {
+  connected: boolean
+  email: string | null
+}
+
+export type GmailConnectResponse = {
+  authorization_url: string
+}
+
 const apiUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
@@ -67,4 +76,7 @@ export const api = {
       body: JSON.stringify({ payload }),
     }),
   executions: (id: string) => request<Execution[]>(`/api/workflows/${id}/executions`),
+  gmailStatus: () => request<GmailStatus>('/api/integrations/gmail/status'),
+  connectGmail: () => request<GmailConnectResponse>('/api/integrations/gmail/connect'),
+  disconnectGmail: () => request<void>('/api/integrations/gmail', { method: 'DELETE' }),
 }

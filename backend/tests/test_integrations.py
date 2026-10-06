@@ -1,8 +1,9 @@
-from unittest.mock import Mock, patch
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
 from app.core.actions.github import GitHubAction
+from app.core.actions.email import EmailAction
 from app.core.actions.http import HttpAction
 from app.core.event import Event, ExecutionContext
 
@@ -47,3 +48,42 @@ def test_github_action_does_not_store_token(mock_client: Mock) -> None:
     assert context.data["action_results"] == [{"type": "github", "status_code": 204}]
     headers = mock_client.return_value.__enter__.return_value.post.call_args.kwargs["headers"]
     assert headers["Authorization"] == "Bearer secret-token"
+
+
+def test_email_action_sends_safe_metadata(monkeypatch) -> None:
+    monkeypatch.setattr("app.core.actions.email.settings.email_api_key", "test-key")
+    monkeypatch.setattr("app.core.actions.email.settings.email_from", "sender@example.com")
+    response = Mock(is_error=False, status_code=200)
+    response.json.return_value = {"id": "email-123"}
+    client = MagicMock()
+    client.__enter__.return_value.send.return_value = response
+
+    with patch("app.core.actions.email.httpx.Client", return_value=client):
+        context = ExecutionContext(Event(type="manual", source="test"))
+        EmailAction(
+            {
+                "to": ["recipient@example.com"],
+                "subject": "FlowForge test",
+                "text": "The workflow ran.",
+            }
+        ).execute(context)
+
+    assert context.data["action_results"] == [
+        {"type": "email", "provider": "resend", "status_code": 200, "provider_id": "email-123"}
+    ]
+    request = client.__enter__.return_value.send.call_args.args[0]
+    assert "test-key" in request.headers["Authorization"]
+    assert "test-key" not in str(context.data)
+
+
+def test_email_action_validates_recipients(monkeypatch) -> None:
+    monkeypatch.setattr("app.core.actions.email.settings.email_api_key", "test-key")
+    with pytest.raises(ValueError, match="valid email"):
+        EmailAction(
+            {
+                "from": "sender@example.com",
+                "to": ["not-an-email"],
+                "subject": "Test",
+                "text": "Body",
+            }
+        )

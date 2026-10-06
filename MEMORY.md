@@ -20,6 +20,8 @@ Update this after major decisions, completed phases, or bugs that future agents 
 - 2026-10-06 Phase 2 hydrates persisted workflow configuration through factories, evaluates trigger/condition objects in `WorkflowEngine`, and records manual executions. Week 2 actions are deterministic `NoOpAction`; network integrations are deferred to Week 3.
 - 2026-10-06 Week 3 adds SSRF-guarded HTTP actions, GitHub dispatch actions, GitHub webhook dispatch, CORS for local frontend development, and a React workflow dashboard with Supabase client login wiring. Backend ownership checks activate when Supabase is configured; local tests retain auth-disabled SQLite mode.
 - 2026-10-06 Final slice adds workflow CRUD/configuration APIs, frontend trigger/condition/action builder, deletion, disabled-workflow protection, signed GitHub webhooks, bounded HTTP retries, and deployment instructions.
+- 2026-10-06 Email action adds Resend delivery through a backend-only API key, validated recipients/content, safe provider metadata, bounded retries, and dedicated frontend fields.
+- 2026-10-06 Approved and implemented personal Gmail OAuth integration using encrypted per-user tokens, Gmail send scope, connection/disconnect UI, and ownership-aware email execution.
 
 ## AI / Tooling Decisions
 

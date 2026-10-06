@@ -18,9 +18,18 @@ SUPABASE_URL=https://<project>.supabase.co
 SUPABASE_ANON_KEY=<Supabase anonymous key>
 GITHUB_WEBHOOK_SECRET=<optional GitHub webhook secret>
 FRONTEND_ORIGIN=https://<vercel-project>.vercel.app
+EMAIL_PROVIDER=resend
+EMAIL_API_KEY=<Resend API key>
+EMAIL_FROM=FlowForge <noreply@your-verified-domain.com>
+GOOGLE_CLIENT_ID=<Google OAuth web client ID>
+GOOGLE_CLIENT_SECRET=<Google OAuth web client secret>
+GOOGLE_REDIRECT_URI=http://localhost:8000/api/integrations/gmail/callback
+TOKEN_ENCRYPTION_KEY=<Fernet key>
 ```
 
 Do not use the Supabase service-role key in the frontend or commit any credentials.
+The email API key must remain a backend-only environment variable. Verify the sender domain with Resend before testing delivery.
+For personal Gmail sending, configure the Google OAuth variables instead. Generate `TOKEN_ENCRYPTION_KEY` with `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`.
 
 ## Render backend
 
@@ -61,6 +70,19 @@ After deployment, use the production frontend URL in Supabase redirect settings 
 5. Create a webhook workflow and send a signed GitHub webhook request if `GITHUB_WEBHOOK_SECRET` is configured.
 
 Local development uses the templates in `backend/.env.example` and `frontend/.env.example`.
+
+## Personal Gmail integration
+
+1. In Google Cloud Console, create an OAuth Web application and enable the Gmail API.
+2. Configure the OAuth consent screen and add the `gmail.send` scope.
+3. Add `http://localhost:8000/api/integrations/gmail/callback` as an authorized redirect URI.
+4. Set `EMAIL_PROVIDER=gmail`, the Google OAuth variables, and a generated token encryption key in the backend `.env`.
+5. Start FlowForge, sign in, and click **Connect Gmail**.
+6. Approve the limited Gmail sending permission.
+7. Create an Email action. It sends from the connected Gmail account; no sender address or Gmail password is stored in the workflow.
+8. Disconnect Gmail from the dashboard to remove the stored encrypted connection.
+
+For production, use the HTTPS backend callback URL as the Google redirect URI and keep the client secret and token encryption key in the backend hosting provider only.
 
 ## GitHub repository dispatch demonstration
 

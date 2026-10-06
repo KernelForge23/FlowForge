@@ -16,6 +16,7 @@ class Event:
 @dataclass
 class ExecutionContext:
     event: Event
+    user_id: str | None = None
     data: dict[str, Any] = field(default_factory=dict)
 
     def lookup(self, field_name: str) -> Any:

@@ -76,6 +76,29 @@ class Integration(TimestampMixin, Base):
     actions: Mapped[list["WorkflowAction"]] = relationship(back_populates="integration")
 
 
+class GmailConnection(TimestampMixin, Base):
+    __tablename__ = "gmail_connections"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(320), nullable=False)
+    access_token: Mapped[str] = mapped_column(Text, nullable=False)
+    refresh_token: Mapped[str] = mapped_column(Text, nullable=False)
+    token_expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+    user: Mapped[User] = relationship()
+
+
+class GmailOAuthState(Base):
+    __tablename__ = "gmail_oauth_states"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
+    state_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
 class WorkflowAction(Base):
     __tablename__ = "workflow_actions"
 

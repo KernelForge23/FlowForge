@@ -9,6 +9,13 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app.main import app
 from app.models import Base
+from app.config import settings
+
+
+@pytest.fixture(autouse=True)
+def local_test_settings(monkeypatch):
+    monkeypatch.setattr(settings, "supabase_url", "")
+    monkeypatch.setattr(settings, "email_provider", "resend")
 
 
 @pytest.fixture

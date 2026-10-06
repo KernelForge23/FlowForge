@@ -19,11 +19,11 @@ class EngineResult:
 
 
 class WorkflowEngine:
-    def execute(self, workflow: Workflow, event: Event) -> EngineResult:
+    def execute(self, workflow: Workflow, event: Event, user_id: str | None = None) -> EngineResult:
         if not workflow.trigger.should_execute(event):
             return EngineResult(status=ExecutionStatus.SKIPPED, error="Trigger did not match")
 
-        context = ExecutionContext(event=event)
+        context = ExecutionContext(event=event, user_id=user_id)
         if workflow.condition is not None and not workflow.condition.evaluate(context):
             return EngineResult(status=ExecutionStatus.SKIPPED, error="Conditions did not match")
 
