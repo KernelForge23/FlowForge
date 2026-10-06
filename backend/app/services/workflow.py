@@ -8,7 +8,7 @@ from app.core.factories import ActionFactory, ConditionFactory, TriggerFactory
 from app.core.workflow import Workflow as RuntimeWorkflow
 from app.models import Execution, User, Workflow, WorkflowAction, WorkflowCondition, WorkflowTrigger
 from app.repositories.workflow import WorkflowRepository
-from app.schemas.workflows import WorkflowCreate
+from app.schemas.workflows import WorkflowCreate, WorkflowUpdate
 
 
 class WorkflowService:
@@ -39,7 +39,50 @@ class WorkflowService:
             for index, item in enumerate(request.actions)
         ]
         self.session.flush()
+        self._validate_runtime(workflow)
         return workflow
+
+    def update(self, workflow_id: str, request: WorkflowUpdate) -> Workflow:
+        workflow = self.repository.get(workflow_id)
+        if workflow is None:
+            raise ValueError("Workflow not found")
+        workflow.name = request.name
+        workflow.enabled = request.enabled
+        if workflow.trigger is None:
+            workflow.trigger = WorkflowTrigger(
+                trigger_type=request.trigger.type,
+                config=request.trigger.config,
+            )
+        else:
+            workflow.trigger.trigger_type = request.trigger.type
+            workflow.trigger.config = request.trigger.config
+        workflow.conditions = [
+            WorkflowCondition(condition_type=item.type, config=item.config)
+            for item in request.conditions
+        ]
+        workflow.actions = [
+            WorkflowAction(position=index, action_type=item.type, config=item.config)
+            for index, item in enumerate(request.actions)
+        ]
+        self.session.flush()
+        self._validate_runtime(workflow)
+        return workflow
+
+    def delete(self, workflow_id: str) -> None:
+        workflow = self.repository.get(workflow_id)
+        if workflow is None:
+            raise ValueError("Workflow not found")
+        self.session.delete(workflow)
+        self.session.flush()
+
+    def _validate_runtime(self, workflow: Workflow) -> None:
+        if workflow.trigger is None:
+            raise ValueError("Workflow requires a trigger")
+        TriggerFactory.create(workflow.trigger.trigger_type, workflow.trigger.config)
+        for condition in workflow.conditions:
+            ConditionFactory.create(condition.condition_type, condition.config)
+        for action in workflow.actions:
+            ActionFactory.create(action.action_type, action.config)
 
     def load_runtime(self, workflow_id: str) -> tuple[Workflow, RuntimeWorkflow]:
         stored = self.repository.get(workflow_id)
@@ -66,15 +109,22 @@ class WorkflowService:
         )
 
     def run_manual(self, workflow_id: str, payload: dict) -> Execution:
+        return self.run_event(
+            workflow_id,
+            Event(type="manual", source="manual", payload=payload),
+        )
+
+    def run_event(self, workflow_id: str, event: Event) -> Execution:
         stored, runtime = self.load_runtime(workflow_id)
-        event = Event(type="manual", source="manual", payload=payload)
+        if not stored.enabled:
+            raise ValueError("Workflow is disabled")
         result = WorkflowEngine().execute(runtime, event)
         execution = Execution(
             workflow_id=stored.id,
             status=result.status.value,
             started_at=datetime.now(timezone.utc),
             completed_at=datetime.now(timezone.utc),
-            trigger_data=payload,
+            trigger_data=event.payload,
             result={"action_count": result.action_count},
             error=result.error,
         )
