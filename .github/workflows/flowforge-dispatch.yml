@@ -1,0 +1,23 @@
+name: FlowForge dispatch
+
+on:
+  repository_dispatch:
+    types: [flowforge]
+
+permissions:
+  issues: write
+
+jobs:
+  create-flowforge-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create visible issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FLOWFORGE_SOURCE: ${{ github.event.client_payload.source }}
+          FLOWFORGE_PAYLOAD: ${{ toJson(github.event.client_payload) }}
+        run: |
+          gh issue create \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "FlowForge event received" \
+            --body "$(printf 'A FlowForge repository dispatch was received.\n\nSource: %s\n\nPayload:\n```json\n%s\n```' "$FLOWFORGE_SOURCE" "$FLOWFORGE_PAYLOAD")"
