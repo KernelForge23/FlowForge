@@ -33,6 +33,9 @@ Update this after major decisions, completed phases, or bugs that future agents 
 - Generic HTTP actions need SSRF protections from day one
 - SQLite JSON + string UUIDs; switch `DATABASE_URL` to Postgres before production
 - 2026-10-06 Debug: authenticated workflow creation failed because frontend API calls omitted the Supabase bearer token; fixed token propagation and local User synchronization.
+- 2026-10-07 Production login debug: `https://flow-forge-ruddy.vercel.app/` calls the `hivvbrbucixasoorbbsd` Supabase project, while local `frontend/.env` uses `bdhhvmwxbinibiksjhnc`; production `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are mismatched or point to the wrong project. Correct the Vercel Production pair and redeploy.
+- 2026-10-07 Production project decision: use the `flowforge-production` Supabase project at `hivvbrbucixasoorbbsd.supabase.co` for production. Vercel must use this project's matching anonymous/publishable key, then redeploy and repeat the browser sign-in check.
+- 2026-10-07 Gmail production debug: Render health is 200, but an OPTIONS preflight from `https://flow-forge-ruddy.vercel.app` to `/api/integrations/gmail/connect` returns `400 Disallowed CORS origin`; set Render `FRONTEND_ORIGIN` to the exact Vercel origin and redeploy. After CORS is fixed, verify Google OAuth variables and redirect URI.
 
 ## Completed
 

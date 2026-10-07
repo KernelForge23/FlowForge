@@ -17,7 +17,7 @@ DATABASE_URL=<Supabase PostgreSQL connection string>
 SUPABASE_URL=https://<project>.supabase.co
 SUPABASE_ANON_KEY=<Supabase anonymous key>
 GITHUB_WEBHOOK_SECRET=<optional GitHub webhook secret>
-FRONTEND_ORIGIN=https://<vercel-project>.vercel.app
+FRONTEND_ORIGIN=https://flow-forge-ruddy.vercel.app
 EMAIL_PROVIDER=resend
 EMAIL_API_KEY=<Resend API key>
 EMAIL_FROM=FlowForge <noreply@your-verified-domain.com>
@@ -63,6 +63,22 @@ VITE_SUPABASE_ANON_KEY=<Supabase anonymous key>
 ```
 
 After deployment, use the production frontend URL in Supabase redirect settings and configure backend CORS for that origin before public use.
+`FRONTEND_ORIGIN` must be the exact browser origin with no trailing slash:
+`https://flow-forge-ruddy.vercel.app`. If it is missing or points to a
+different Vercel deployment, authenticated API calls fail in the browser with
+the generic `Failed to fetch` message. After changing the Render variable,
+redeploy or restart the Render service.
+
+If production login shows `Invalid API key`, inspect the deployed bundle's
+Supabase project only through the browser Network panel and compare it with the
+project that issued the configured key. For this deployment,
+`VITE_SUPABASE_URL` must be
+`https://hivvbrbucixasoorbbsd.supabase.co`, and
+`VITE_SUPABASE_ANON_KEY` must be the anonymous/publishable key from that same
+`flowforge-production` project. Do not mix a key from another project with this
+URL. Update the Vercel **Production** environment variables, then trigger a
+fresh deployment because Vite embeds these values at build time. Never paste a
+service-role key into Vercel frontend variables.
 
 ## Smoke test
 
