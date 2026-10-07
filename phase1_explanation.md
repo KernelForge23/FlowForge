@@ -9,7 +9,7 @@
 
 ## 1. What Phase 1 is trying to prove
 
-FlowForge is designed around a workflow:
+FlowForge is designed around  workflow:
 
 ```text
 WHEN a trigger arrives
