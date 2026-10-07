@@ -132,3 +132,35 @@ def test_workflow_can_be_updated_and_deleted(client, db_session) -> None:
         assert client.get(f"/api/workflows/{workflow_id}").status_code == 404
     finally:
         app.dependency_overrides.clear()
+
+
+def test_workflow_with_execution_can_be_deleted(client, db_session) -> None:
+    user = User(email="delete-execution@example.com")
+    db_session.add(user)
+    db_session.commit()
+
+    def override_session():
+        yield db_session
+
+    app.dependency_overrides[get_session] = override_session
+    try:
+        create = client.post(
+            "/api/workflows",
+            json={
+                "user_id": user.id,
+                "name": "Workflow with history",
+                "enabled": True,
+                "trigger": {"type": "manual"},
+                "actions": [{"type": "noop"}],
+            },
+        )
+        workflow_id = create.json()["id"]
+        run = client.post(f"/api/workflows/{workflow_id}/run", json={"payload": {}})
+        assert run.status_code == 200
+
+        deleted = client.delete(f"/api/workflows/{workflow_id}")
+
+        assert deleted.status_code == 204
+        assert client.get(f"/api/workflows/{workflow_id}").status_code == 404
+    finally:
+        app.dependency_overrides.clear()

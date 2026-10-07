@@ -34,7 +34,7 @@ def test_http_action_records_status_without_response_body(mock_client: Mock) -> 
 
 
 @patch("app.core.actions.github.httpx.Client")
-def test_github_action_does_not_store_token(mock_client: Mock) -> None:
+def test_github_action_sends_token_without_storing_it(mock_client: Mock) -> None:
     response = Mock()
     response.is_error = False
     response.status_code = 204

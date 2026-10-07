@@ -86,7 +86,16 @@ service-role key into Vercel frontend variables.
 2. Create a manual workflow.
 3. Select it and run it.
 4. Confirm a `SUCCESS` execution appears after refresh.
-5. Create a webhook workflow and send a signed GitHub webhook request if `GITHUB_WEBHOOK_SECRET` is configured.
+5. Create a webhook workflow. In the GitHub repository, open **Settings →
+   Webhooks → Add webhook** and configure:
+   - Payload URL: `https://<render-service>/api/webhooks/github`
+   - Content type: `application/json`
+   - Secret: the same value as `GITHUB_WEBHOOK_SECRET`
+   - Events: select the GitHub events whose payloads the workflow conditions
+     inspect (or choose the individual-event option rather than sending every
+     event).
+   GitHub should show a successful delivery after saving. FlowForge validates
+   the `X-Hub-Signature-256` header before running enabled webhook workflows.
 
 Local development uses the templates in `backend/.env.example` and `frontend/.env.example`.
 
@@ -122,4 +131,12 @@ Configure the FlowForge GitHub action with:
 
 The token must be allowed to access the target repository and dispatch events. For a fine-grained token, grant access to `KernelForge23/FlowForge` and set **Contents: Read and write**; keep **Metadata: Read-only** enabled. The token is stored in the workflow configuration for this MVP; use a disposable test token and rotate it after demonstrations.
 
-After running the workflow in FlowForge, open the repository's **Issues** tab. A new issue named **FlowForge event received** should appear.
+In the workflow builder, choose **GitHub dispatch** and enter the token,
+target `owner/repository`, event type, and a JSON client payload. The target
+repository must contain a workflow listening for that event type, such as the
+included `.github/workflows/flowforge-dispatch.yml`.
+
+After running the workflow in FlowForge, open the target repository's
+**Actions** tab. The dispatch workflow should run; for the included demo,
+the repository's **Issues** tab should then contain an issue named
+**FlowForge event received**.

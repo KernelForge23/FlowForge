@@ -38,7 +38,9 @@ class Workflow(TimestampMixin, Base):
     actions: Mapped[list["WorkflowAction"]] = relationship(
         back_populates="workflow", cascade="all, delete-orphan", order_by="WorkflowAction.position"
     )
-    executions: Mapped[list["Execution"]] = relationship(back_populates="workflow")
+    executions: Mapped[list["Execution"]] = relationship(
+        back_populates="workflow", cascade="all, delete-orphan"
+    )
 
 
 class WorkflowTrigger(Base):

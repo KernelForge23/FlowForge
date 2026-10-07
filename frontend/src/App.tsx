@@ -6,6 +6,8 @@ import type { Component, Execution, GmailStatus, Workflow, WorkflowDetail } from
 import { supabase } from './lib/supabase'
 
 const emptyComponent = (type: string): Component => ({ type, config: {} })
+const apiBaseUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
+const githubWebhookUrl = `${apiBaseUrl.replace(/\/$/, '')}/api/webhooks/github`
 
 function App() {
   const [session, setSession] = useState<Session | null>(null)
@@ -21,6 +23,10 @@ function App() {
   const [conditionValue, setConditionValue] = useState('')
   const [actionType, setActionType] = useState('noop')
   const [actionConfig, setActionConfig] = useState('{}')
+  const [githubToken, setGithubToken] = useState('')
+  const [githubRepository, setGithubRepository] = useState('')
+  const [githubEventType, setGithubEventType] = useState('flowforge')
+  const [githubPayload, setGithubPayload] = useState('{}')
   const [emailTo, setEmailTo] = useState('')
   const [emailSubject, setEmailSubject] = useState('')
   const [emailText, setEmailText] = useState('')
@@ -90,6 +96,10 @@ function App() {
     const action = workflow?.actions[0] ?? emptyComponent('noop')
     setActionType(action.type)
     setActionConfig(JSON.stringify(action.config, null, 2))
+    setGithubToken(typeof action.config.token === 'string' ? action.config.token : '')
+    setGithubRepository(typeof action.config.repository === 'string' ? action.config.repository : '')
+    setGithubEventType(typeof action.config.event_type === 'string' ? action.config.event_type : 'flowforge')
+    setGithubPayload(JSON.stringify(action.config.body ?? {}, null, 2))
     setEmailTo(Array.isArray(action.config.to) ? action.config.to.filter((item): item is string => typeof item === 'string').join(', ') : '')
     setEmailSubject(typeof action.config.subject === 'string' ? action.config.subject : '')
     setEmailText(typeof action.config.text === 'string' ? action.config.text : '')
@@ -122,6 +132,26 @@ function App() {
         subject: emailSubject.trim(),
         ...(emailText ? { text: emailText } : {}),
         ...(emailHtml ? { html: emailHtml } : {}),
+      }
+    } else if (actionType === 'github') {
+      if (!githubToken.trim() || !githubRepository.trim() || !githubEventType.trim()) {
+        setError('GitHub dispatch requires a token, owner/repository, and event type')
+        return
+      }
+      try {
+        const payload: unknown = JSON.parse(githubPayload)
+        if (typeof payload !== 'object' || payload === null || Array.isArray(payload)) {
+          throw new Error('GitHub client payload must be a JSON object')
+        }
+        parsedAction = {
+          token: githubToken.trim(),
+          repository: githubRepository.trim(),
+          event_type: githubEventType.trim(),
+          body: payload,
+        }
+      } catch (caught) {
+        setError(caught instanceof Error ? caught.message : 'Invalid GitHub client payload')
+        return
       }
     } else {
       try {
@@ -252,11 +282,12 @@ function App() {
             <form onSubmit={saveWorkflow}>
               <label>Name<input value={name} onChange={(event) => setName(event.target.value)} required /></label>
               <label>Trigger<select value={triggerType} onChange={(event) => setTriggerType(event.target.value)}><option value="manual">Manual</option><option value="webhook">GitHub webhook</option></select></label>
+              {triggerType === 'webhook' && <div className="setup-panel"><strong>Connect GitHub</strong><p className="muted">In the GitHub repository, open Settings → Webhooks → Add webhook.</p><code>{githubWebhookUrl}</code><p className="muted">Use <strong>application/json</strong>, enter the same secret configured as <code>GITHUB_WEBHOOK_SECRET</code> on the backend, and select the events this workflow should inspect.</p></div>}
               <label className="checkbox"><input type="checkbox" checked={enabled} onChange={(event) => setEnabled(event.target.checked)} /> Enabled</label>
               <label>Condition<select value={condition?.type ?? ''} onChange={(event) => setCondition(event.target.value ? emptyComponent(event.target.value) : null)}><option value="">No condition</option><option value="equals">Equals</option><option value="contains">Contains</option><option value="not_equals">Not equals</option></select></label>
               {condition && <div className="two-col"><input placeholder="Payload field" value={conditionField} onChange={(event) => setConditionField(event.target.value)} /><input placeholder="Expected value" value={conditionValue} onChange={(event) => setConditionValue(event.target.value)} /></div>}
               <label>Action<select value={actionType} onChange={(event) => setActionType(event.target.value)}><option value="noop">No-op</option><option value="http">HTTP request</option><option value="github">GitHub dispatch</option><option value="email">Email</option></select></label>
-              {actionType === 'email' ? <><p className="muted">{gmail.connected ? `Sends from ${gmail.email}` : 'Connect Gmail before running this action.'}</p><label>Recipients (comma-separated)<input type="text" placeholder="you@example.com" value={emailTo} onChange={(event) => setEmailTo(event.target.value)} /></label><label>Subject<input type="text" value={emailSubject} onChange={(event) => setEmailSubject(event.target.value)} /></label><label>Text body<textarea rows={4} value={emailText} onChange={(event) => setEmailText(event.target.value)} /></label><label>HTML body (optional)<textarea rows={4} value={emailHtml} onChange={(event) => setEmailHtml(event.target.value)} /></label></> : actionType !== 'noop' && <label>Action configuration (JSON)<textarea rows={5} value={actionConfig} onChange={(event) => setActionConfig(event.target.value)} /></label>}
+              {actionType === 'email' ? <><p className="muted">{gmail.connected ? `Sends from ${gmail.email}` : 'Connect Gmail before running this action.'}</p><label>Recipients (comma-separated)<input type="text" placeholder="you@example.com" value={emailTo} onChange={(event) => setEmailTo(event.target.value)} /></label><label>Subject<input type="text" value={emailSubject} onChange={(event) => setEmailSubject(event.target.value)} /></label><label>Text body<textarea rows={4} value={emailText} onChange={(event) => setEmailText(event.target.value)} /></label><label>HTML body (optional)<textarea rows={4} value={emailHtml} onChange={(event) => setEmailHtml(event.target.value)} /></label></> : actionType === 'github' ? <><p className="muted">FlowForge sends a <code>repository_dispatch</code> event to GitHub. Use a fine-grained token with Contents: Read and write on the target repository.</p><label>GitHub token<input type="password" value={githubToken} onChange={(event) => setGithubToken(event.target.value)} autoComplete="off" /></label><label>Repository<input placeholder="owner/repository" value={githubRepository} onChange={(event) => setGithubRepository(event.target.value)} /></label><label>Event type<input value={githubEventType} onChange={(event) => setGithubEventType(event.target.value)} /></label><label>Client payload (JSON)<textarea rows={5} value={githubPayload} onChange={(event) => setGithubPayload(event.target.value)} /></label></> : actionType !== 'noop' && <label>Action configuration (JSON)<textarea rows={5} value={actionConfig} onChange={(event) => setActionConfig(event.target.value)} /></label>}
               <div className="button-row"><button disabled={busy}>{busy ? 'Saving…' : selected ? 'Save changes' : 'Create workflow'}</button>{selected && <><button type="button" className="secondary" onClick={() => loadBuilder(null)}>Cancel</button><button type="button" className="danger" onClick={() => void deleteWorkflow()}>Delete</button></>}</div>
             </form>
             <div className="workflow-list">
