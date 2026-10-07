@@ -300,7 +300,7 @@ function App() {
             <h3>Execution history</h3>
             {!selected && <p className="muted">Choose a workflow to inspect its runs.</p>}
             {selected && executions.length === 0 && <p className="muted">No executions recorded.</p>}
-            {executions.map((execution) => <div className="execution-row" key={execution.id}><span>{execution.status}</span><code>{execution.id.slice(0, 8)}</code></div>)}
+            {executions.map((execution) => <div className="execution-row" key={execution.id}><div><strong>{execution.status}</strong>{execution.error && <p className="execution-error">{execution.error}</p>}</div><code>{execution.id.slice(0, 8)}</code></div>)}
           </section>
         </div>
         {error && <p className="error">{error}</p>}

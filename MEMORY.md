@@ -24,6 +24,7 @@ Update this after major decisions, completed phases, or bugs that future agents 
 - 2026-10-06 Approved and implemented personal Gmail OAuth integration using encrypted per-user tokens, Gmail send scope, connection/disconnect UI, and ownership-aware email execution.
 - 2026-10-07 GitHub setup UX adds guided repository-dispatch fields and signed webhook setup instructions; the existing backend endpoint and token-safety model remain unchanged.
 - 2026-10-07 Delete debug: deleting workflows with execution history failed because `Workflow.executions` lacked ORM delete cascade; added `all, delete-orphan` and a regression test. No database schema change is required; redeploy the backend.
+- 2026-10-07 Webhook email debug: GitHub deliveries arrive, but the execution is `SKIPPED`; the dashboard previously hid `Execution.error`, making condition/trigger mismatches opaque. Frontend now renders the stored error beside each execution.
 
 ## AI / Tooling Decisions
 

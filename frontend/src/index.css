@@ -28,6 +28,7 @@ form { display: grid; gap: 14px; margin-top: 24px; } label { display: grid; gap:
 .workflow-list { display: grid; gap: 8px; } .workflow-row { display: flex; justify-content: space-between; text-align: left; color: #172033; background: #f8fafc; } .workflow-row.selected { outline: 2px solid #93c5fd; }
 .status { color: #15803d; font-size: 11px; font-weight: 700; } .detail-heading { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
 .execution-row { display: flex; justify-content: space-between; padding: 12px 0; border-top: 1px solid #e2e8f0; } code { color: #475569; }
+.execution-error { margin: 4px 0 0; color: #b42318; font-size: 13px; }
 .setup-panel { display: grid; gap: 8px; padding: 14px; border: 1px solid #bfdbfe; border-radius: 10px; background: #eff6ff; color: #1e3a8a; }
 .setup-panel p { margin: 0; }
 .setup-panel code { overflow-wrap: anywhere; }
