@@ -1,6 +1,6 @@
 # FlowForge Phase 2 Backend Explanation
 
-> This document explains the Week 2 backend that exists in the repository. It
+> This document explains the Week 2 backend that exists in  repository. It
 > describes the implemented workflow engine slice, not the complete MVP. Phase
 > 2 connects persisted workflow configuration to real runtime objects, executes
 > those objects, and records the result.
