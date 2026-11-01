@@ -83,7 +83,7 @@ class GmailService:
     def profile(self, access_token: str) -> str:
         response = httpx.get(
             "https://openidconnect.googleapis.com/v1/userinfo",
-            headers={"Authorization": f"Bearer {access_token}"},
+            headers={"Authorization": "Bearer " + access_token},
             timeout=10.0,
         )
         if response.status_code != 200:
@@ -175,7 +175,7 @@ class GmailService:
         encoded = base64.urlsafe_b64encode(message.as_bytes()).decode()
         response = httpx.post(
             "https://gmail.googleapis.com/gmail/v1/users/me/messages/send",
-            headers={"Authorization": f"Bearer {access_token}"},
+            headers={"Authorization": "Bearer " + access_token},
             json={"raw": encoded},
             timeout=settings.http_action_timeout_seconds,
         )
