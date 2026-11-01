@@ -123,6 +123,29 @@ class GmailService:
         except (InvalidToken, UnicodeDecodeError) as exc:
             raise RuntimeError("Stored Gmail credentials are invalid") from exc
 
+    @staticmethod
+    def _provider_error(response: httpx.Response) -> str:
+        try:
+            payload = response.json()
+        except ValueError:
+            return ""
+        if not isinstance(payload, dict):
+            return ""
+        error = payload.get("error")
+        if isinstance(error, dict):
+            message = error.get("message")
+            reasons = error.get("errors")
+            reason = ""
+            if isinstance(reasons, list) and reasons and isinstance(reasons[0], dict):
+                value = reasons[0].get("reason")
+                if isinstance(value, str):
+                    reason = value
+            details = [value for value in (message, reason) if isinstance(value, str) and value]
+            return ": ".join(details)
+        if isinstance(error, str):
+            return error
+        return ""
+
     def _refresh(self, connection: GmailConnection, refresh_token: str) -> str:
         response = httpx.post(
             "https://oauth2.googleapis.com/token",
@@ -180,7 +203,14 @@ class GmailService:
             timeout=settings.http_action_timeout_seconds,
         )
         if response.status_code >= 400:
-            raise RuntimeError(f"Gmail API returned status {response.status_code}")
+            detail = self._provider_error(response)
+            if response.status_code in {401, 403}:
+                message = "Gmail authorization was rejected; reconnect Gmail and verify the Gmail API is enabled"
+            else:
+                message = f"Gmail API returned status {response.status_code}"
+            if detail:
+                message = f"{message}: {detail}"
+            raise RuntimeError(message)
         provider_id = response.json().get("id")
         result: dict[str, object] = {"type": "email", "provider": "gmail", "status": "sent"}
         if isinstance(provider_id, str):
