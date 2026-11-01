@@ -1,0 +1,504 @@
+{
+  "snapshot": "2026-10-31",
+  "files": [
+    {
+      "path": "backend/app/__init__.py",
+      "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+      "lines": 1,
+      "nonblank": 0,
+      "annotated_lines": 1
+    },
+    {
+      "path": "backend/app/api/__init__.py",
+      "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+      "lines": 1,
+      "nonblank": 0,
+      "annotated_lines": 1
+    },
+    {
+      "path": "backend/app/api/auth.py",
+      "sha256": "2e3c73cfdb8a22f5e4711948af909ea1a5d543c41d9c13533f3638c91406a9dc",
+      "lines": 41,
+      "nonblank": 35,
+      "annotated_lines": 41
+    },
+    {
+      "path": "backend/app/api/routes/__init__.py",
+      "sha256": "6b4b950cfe4355ea621c411a7206fa85b3c7f2d391da9f39b81278884e295e48",
+      "lines": 9,
+      "nonblank": 7,
+      "annotated_lines": 9
+    },
+    {
+      "path": "backend/app/api/routes/health.py",
+      "sha256": "44311259bda12fb6a8283603ca0a7e8f208e5e050809103d1368fd66779c6e6f",
+      "lines": 15,
+      "nonblank": 9,
+      "annotated_lines": 15
+    },
+    {
+      "path": "backend/app/api/routes/integrations.py",
+      "sha256": "fd2f91a0997f60272f604c29db0dd8febaeb216284debd9820daf9322d0d3ad8",
+      "lines": 104,
+      "nonblank": 91,
+      "annotated_lines": 104
+    },
+    {
+      "path": "backend/app/api/routes/webhooks.py",
+      "sha256": "a12c24e7c266c9cfb89c7ecef4c98da6c1326833b89e2211f01ec06a3484283b",
+      "lines": 58,
+      "nonblank": 53,
+      "annotated_lines": 58
+    },
+    {
+      "path": "backend/app/api/routes/workflows.py",
+      "sha256": "bb8d83fb8006c38ba9f51f8a9c056095338a287b7bdce646119b127ae10e2619",
+      "lines": 152,
+      "nonblank": 134,
+      "annotated_lines": 152
+    },
+    {
+      "path": "backend/app/config.py",
+      "sha256": "f834bc21a612fb1ea56cb6e2c7c98a956ef69b6b0278e587de860e4ff755931e",
+      "lines": 31,
+      "nonblank": 25,
+      "annotated_lines": 31
+    },
+    {
+      "path": "backend/app/core/__init__.py",
+      "sha256": "71849a820b70d953f177023bbda28ef20cb00721d7b62815e632c483e1f710b6",
+      "lines": 17,
+      "nonblank": 16,
+      "annotated_lines": 17
+    },
+    {
+      "path": "backend/app/core/actions/__init__.py",
+      "sha256": "ee85d99aa314b1bf452a52f13716b0bb170fcb7d927bc5e8294879297340e4e4",
+      "lines": 7,
+      "nonblank": 6,
+      "annotated_lines": 7
+    },
+    {
+      "path": "backend/app/core/actions/base.py",
+      "sha256": "3702061146e7accb47d449c87d58b525e24f70359ffe2187f91a3e05fe152efa",
+      "lines": 9,
+      "nonblank": 6,
+      "annotated_lines": 9
+    },
+    {
+      "path": "backend/app/core/actions/email.py",
+      "sha256": "33bea9070ca0b00a962d3c74c5570a31dcfe7e17566c9a4c2024076aebcfb251",
+      "lines": 120,
+      "nonblank": 110,
+      "annotated_lines": 120
+    },
+    {
+      "path": "backend/app/core/actions/github.py",
+      "sha256": "ef64f6545f9bd3aa9b23bddac0ff5208952565a6ebebebcf70f6f172cf770572",
+      "lines": 45,
+      "nonblank": 40,
+      "annotated_lines": 45
+    },
+    {
+      "path": "backend/app/core/actions/http.py",
+      "sha256": "19246f44c44524a34b39e206e37160eb20b84da9999c7b026714d594a861c547",
+      "lines": 66,
+      "nonblank": 59,
+      "annotated_lines": 66
+    },
+    {
+      "path": "backend/app/core/actions/noop.py",
+      "sha256": "528f55bff93e7f2406ec47c368ff0cf06e7be255565f731b15aa0f49824a8f62",
+      "lines": 12,
+      "nonblank": 8,
+      "annotated_lines": 12
+    },
+    {
+      "path": "backend/app/core/conditions/__init__.py",
+      "sha256": "090b5bd67272d74cd29313518765a379e40cc5b8d3d5b38881c59f251789bc2b",
+      "lines": 20,
+      "nonblank": 19,
+      "annotated_lines": 20
+    },
+    {
+      "path": "backend/app/core/conditions/base.py",
+      "sha256": "1e222cee22e721b85f8f957b784a199ea9ca43fa43c163e787f826de475b108c",
+      "lines": 9,
+      "nonblank": 6,
+      "annotated_lines": 9
+    },
+    {
+      "path": "backend/app/core/conditions/comparison.py",
+      "sha256": "8ae9d3cc29876f40f545dba61cf479c09941a3075f69208aad9f7cf08b1f6d1a",
+      "lines": 50,
+      "nonblank": 37,
+      "annotated_lines": 50
+    },
+    {
+      "path": "backend/app/core/conditions/composite.py",
+      "sha256": "b0d096f41911e3a9e24333ad17f6cb0dc464f32a5048a3191ae89463fe43a469",
+      "lines": 20,
+      "nonblank": 13,
+      "annotated_lines": 20
+    },
+    {
+      "path": "backend/app/core/conditions/equals.py",
+      "sha256": "be3e58e412e8c91c833abd8cf87bce9a1d35960f29a6d8a5a11d87a07436fa35",
+      "lines": 11,
+      "nonblank": 8,
+      "annotated_lines": 11
+    },
+    {
+      "path": "backend/app/core/engine.py",
+      "sha256": "80885c3f3b71fe8c4fe4a3db9481e00d3c0a2491f8804a5c6b25a75d88b70969",
+      "lines": 41,
+      "nonblank": 32,
+      "annotated_lines": 41
+    },
+    {
+      "path": "backend/app/core/event.py",
+      "sha256": "a6f02274b218828b0f2b28089d74dc787b6823505ed4e39ff0a445f4123f2caa",
+      "lines": 25,
+      "nonblank": 19,
+      "annotated_lines": 25
+    },
+    {
+      "path": "backend/app/core/factories.py",
+      "sha256": "57c91148d0c124c2b23e44099eb0f4ff33a39bd1e133917a468ff838dc7c94aa",
+      "lines": 81,
+      "nonblank": 71,
+      "annotated_lines": 81
+    },
+    {
+      "path": "backend/app/core/triggers/__init__.py",
+      "sha256": "b1c976deeef3434742f884e43706ade9e1ca97842f6f0523ed58ec6b61e391e2",
+      "lines": 6,
+      "nonblank": 5,
+      "annotated_lines": 6
+    },
+    {
+      "path": "backend/app/core/triggers/base.py",
+      "sha256": "1b7c332454492956c68fcacefe064d9c37ccde5bb9657760d7924260ca5dad20",
+      "lines": 9,
+      "nonblank": 6,
+      "annotated_lines": 9
+    },
+    {
+      "path": "backend/app/core/triggers/manual.py",
+      "sha256": "5d911343a72fd92020220654d16da4d25f1789574f96b56fc81c4dfb8cd96b2f",
+      "lines": 9,
+      "nonblank": 6,
+      "annotated_lines": 9
+    },
+    {
+      "path": "backend/app/core/triggers/scheduled.py",
+      "sha256": "32b5f6782d7e330000d036235d05fb8ead98148d37742d9ab043ecc73b31282a",
+      "lines": 7,
+      "nonblank": 5,
+      "annotated_lines": 7
+    },
+    {
+      "path": "backend/app/core/triggers/webhook.py",
+      "sha256": "494869a9da3201093fee3765a638b0b080cfeb20dc90a28aaa322395823b523d",
+      "lines": 12,
+      "nonblank": 9,
+      "annotated_lines": 12
+    },
+    {
+      "path": "backend/app/core/workflow.py",
+      "sha256": "f0b4d88955bc3e76f174f6fd8eafdb06fb4270d35042c7ed23e4725ef8247731",
+      "lines": 19,
+      "nonblank": 16,
+      "annotated_lines": 19
+    },
+    {
+      "path": "backend/app/db.py",
+      "sha256": "66444d3ff5181ffae3d68eca0a19df357afde58326eb20589656173f499c054c",
+      "lines": 31,
+      "nonblank": 23,
+      "annotated_lines": 31
+    },
+    {
+      "path": "backend/app/main.py",
+      "sha256": "de0acfea470dc96dd003e6737a19e9b4560ea34f289178c4813fdd2b827f15cc",
+      "lines": 27,
+      "nonblank": 21,
+      "annotated_lines": 27
+    },
+    {
+      "path": "backend/app/models/__init__.py",
+      "sha256": "6d67557c0250c8668c3cc78a0539e5da4104ee29c4e8b204b578303642a0208e",
+      "lines": 25,
+      "nonblank": 24,
+      "annotated_lines": 25
+    },
+    {
+      "path": "backend/app/models/base.py",
+      "sha256": "70a95ee5620acad6b8b79a09553d388c5ccbcec46121d50ccb23138521c2e236",
+      "lines": 19,
+      "nonblank": 12,
+      "annotated_lines": 19
+    },
+    {
+      "path": "backend/app/models/entities.py",
+      "sha256": "2606acf557c019ca1ba057bf26056b83bce457e1703f6f97ad7520a9aa8727f3",
+      "lines": 130,
+      "nonblank": 93,
+      "annotated_lines": 130
+    },
+    {
+      "path": "backend/app/repositories/__init__.py",
+      "sha256": "a71da2e39fddb35bf65ab8763a0413750bb908898814dc3f371945c550df4d49",
+      "lines": 4,
+      "nonblank": 2,
+      "annotated_lines": 4
+    },
+    {
+      "path": "backend/app/repositories/workflow.py",
+      "sha256": "e16306246d62625839fae05c27b377f774bb2c3463cb5db999f9c0486bbacb5e",
+      "lines": 32,
+      "nonblank": 25,
+      "annotated_lines": 32
+    },
+    {
+      "path": "backend/app/schemas/__init__.py",
+      "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+      "lines": 1,
+      "nonblank": 0,
+      "annotated_lines": 1
+    },
+    {
+      "path": "backend/app/schemas/health.py",
+      "sha256": "ade553292e72fb40a633069592db9f4d9b640a1949bf0c787203c462edbc2719",
+      "lines": 6,
+      "nonblank": 4,
+      "annotated_lines": 6
+    },
+    {
+      "path": "backend/app/schemas/workflows.py",
+      "sha256": "6de5496e0f1e5c7e3dae80ab2aedf356316a556529eac7a6ede418b9b740ee02",
+      "lines": 51,
+      "nonblank": 36,
+      "annotated_lines": 51
+    },
+    {
+      "path": "backend/app/services/__init__.py",
+      "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+      "lines": 1,
+      "nonblank": 0,
+      "annotated_lines": 1
+    },
+    {
+      "path": "backend/app/services/gmail.py",
+      "sha256": "a03aae65a108e7c5fec8d2806baa986979eb4009c7b491439cdc38611fcbfd1f",
+      "lines": 192,
+      "nonblank": 174,
+      "annotated_lines": 192
+    },
+    {
+      "path": "backend/app/services/health.py",
+      "sha256": "c179eb28fbc2857eec967f4b6eddf8ed24fa3ab17edc5f9262aa7e84353cb776",
+      "lines": 6,
+      "nonblank": 4,
+      "annotated_lines": 6
+    },
+    {
+      "path": "backend/app/services/workflow.py",
+      "sha256": "ec3810bebd548042c627210f4a79614eadd2cb8c8469d009393ed6e03a4ea1cb",
+      "lines": 138,
+      "nonblank": 127,
+      "annotated_lines": 138
+    },
+    {
+      "path": "backend/tests/conftest.py",
+      "sha256": "9f4f4d69f8a86013f4d6b92fa9446c79ea37aa7f066e496162aebf5271d8b54c",
+      "lines": 41,
+      "nonblank": 32,
+      "annotated_lines": 41
+    },
+    {
+      "path": "backend/tests/test_auth.py",
+      "sha256": "e08b692cfe25160d784fc85fd5e666b832c0e7e2f6566cfe1c83cc1bb002bd9d",
+      "lines": 18,
+      "nonblank": 13,
+      "annotated_lines": 18
+    },
+    {
+      "path": "backend/tests/test_config.py",
+      "sha256": "543c1f7fa3995eeb3ce83434372773806ec8a4cbe9db98c7687652f3e6474d75",
+      "lines": 8,
+      "nonblank": 5,
+      "annotated_lines": 8
+    },
+    {
+      "path": "backend/tests/test_engine.py",
+      "sha256": "48014a9da77d6b356ef7357de73f415f8935214864d8f7ba2dbcfd385a3b3134",
+      "lines": 85,
+      "nonblank": 69,
+      "annotated_lines": 85
+    },
+    {
+      "path": "backend/tests/test_gmail.py",
+      "sha256": "7b5e6feda0989fe597285bb8392f9e7cd05e1279131aca4f4369e31913f2bb93",
+      "lines": 102,
+      "nonblank": 88,
+      "annotated_lines": 102
+    },
+    {
+      "path": "backend/tests/test_health.py",
+      "sha256": "a87835f2ea3d76451dab7f6d15d271d79204cd68de9a10555fb628f0ac3a4f25",
+      "lines": 6,
+      "nonblank": 6,
+      "annotated_lines": 6
+    },
+    {
+      "path": "backend/tests/test_integrations.py",
+      "sha256": "e48c4bd1f00bb0f7e5e900fead4a82aa206b13051acd4a4c74bbb7e85c019d9f",
+      "lines": 89,
+      "nonblank": 69,
+      "annotated_lines": 89
+    },
+    {
+      "path": "backend/tests/test_models.py",
+      "sha256": "0701923c108b210da5ccc67bc30002eb7ac929d0a8c82c660bbdc3b3443154e9",
+      "lines": 26,
+      "nonblank": 22,
+      "annotated_lines": 26
+    },
+    {
+      "path": "backend/tests/test_oop.py",
+      "sha256": "152f3514dcbc245b0ad59170c76638e4c3d345749a769072f43fe03fdb851e2e",
+      "lines": 55,
+      "nonblank": 44,
+      "annotated_lines": 55
+    },
+    {
+      "path": "backend/tests/test_workflow_api.py",
+      "sha256": "a72f6ae2356990417ab61370bea02d6f793110883f270b617b2099f2eb61a176",
+      "lines": 166,
+      "nonblank": 137,
+      "annotated_lines": 166
+    },
+    {
+      "path": "backend/tests/test_workflow_service.py",
+      "sha256": "36a961b103785900b75b2f2d869df80cdc985b164adb06e01db9043288662179",
+      "lines": 26,
+      "nonblank": 21,
+      "annotated_lines": 26
+    },
+    {
+      "path": "frontend/src/App.css",
+      "sha256": "c2571ce7245629994b8adc84f6c48e1920f047a4e7e29c89a4aeb51eeb1b5433",
+      "lines": 184,
+      "nonblank": 158,
+      "annotated_lines": 184
+    },
+    {
+      "path": "frontend/src/App.tsx",
+      "sha256": "88a79d9534fa45cba3669cb1b8bffd4daa097b7190d9893589f25c0f939644d3",
+      "lines": 312,
+      "nonblank": 294,
+      "annotated_lines": 312
+    },
+    {
+      "path": "frontend/src/index.css",
+      "sha256": "29d66563beffe264afeab0e54f256d01b471683f0e3932af41177d4e5c9a1ed7",
+      "lines": 35,
+      "nonblank": 35,
+      "annotated_lines": 35
+    },
+    {
+      "path": "frontend/src/lib/supabase.ts",
+      "sha256": "404f0a52451d908fb907b5c261fe042559a4b42515816256aa13d30b8d1ab373",
+      "lines": 6,
+      "nonblank": 4,
+      "annotated_lines": 6
+    },
+    {
+      "path": "frontend/src/main.tsx",
+      "sha256": "484f93f3048565a86a47e308f5a12ee27aa12f5291f3b52a4bb5dc03d887dbc7",
+      "lines": 10,
+      "nonblank": 9,
+      "annotated_lines": 10
+    },
+    {
+      "path": "frontend/src/services/api.ts",
+      "sha256": "8227d814c95d2692cd4f0eb38e4996df2733582b61f0e63b6d0830bc4d82cbe9",
+      "lines": 82,
+      "nonblank": 73,
+      "annotated_lines": 82
+    },
+    {
+      "path": "backend/requirements.txt",
+      "sha256": "ec7f55e73262ec95ce47f0fb5445d1bf19c70967329d2b7ddd92debe81f59c0f",
+      "lines": 10,
+      "nonblank": 10,
+      "annotated_lines": 10
+    },
+    {
+      "path": "backend/pytest.ini",
+      "sha256": "e621dabb0551d82e234c399c39d035481d1b20a1ccbeb7a3ade640fc9dd1a151",
+      "lines": 3,
+      "nonblank": 3,
+      "annotated_lines": 3
+    },
+    {
+      "path": "frontend/package.json",
+      "sha256": "39f15a9b846fb38923fe0f90eee1628a3262eb7af0939f020b1b40f07515bbc8",
+      "lines": 26,
+      "nonblank": 26,
+      "annotated_lines": 26
+    },
+    {
+      "path": "frontend/index.html",
+      "sha256": "802bff73f103056273b18d331fee9998b84207e96bc5f5d734163163339515c1",
+      "lines": 13,
+      "nonblank": 13,
+      "annotated_lines": 13
+    },
+    {
+      "path": "frontend/vite.config.ts",
+      "sha256": "f58edcc886dbf642f0aad60dce0c36a378df3022aa88cec76592532b12d529cc",
+      "lines": 7,
+      "nonblank": 6,
+      "annotated_lines": 7
+    },
+    {
+      "path": "frontend/tsconfig.json",
+      "sha256": "ad28d132ee48d6e23917cf5827cace785d0fc01a44ca68b0dda51cc8c3fd3f52",
+      "lines": 7,
+      "nonblank": 7,
+      "annotated_lines": 7
+    },
+    {
+      "path": "frontend/tsconfig.app.json",
+      "sha256": "bbcd078c923aa26585b32222f966a047948210372f3adbf41617e7553ef73e13",
+      "lines": 26,
+      "nonblank": 24,
+      "annotated_lines": 26
+    },
+    {
+      "path": "frontend/tsconfig.node.json",
+      "sha256": "a9e6c7f6fd3ec455a6fe1d4fbb83091e774b62fe116008ab6d8c5e1e88af4629",
+      "lines": 23,
+      "nonblank": 21,
+      "annotated_lines": 23
+    },
+    {
+      "path": "frontend/.oxlintrc.json",
+      "sha256": "3f46d4038fd69c0011da897b887d747e3d66f0bbda8b523a54891fbd473d67ef",
+      "lines": 8,
+      "nonblank": 8,
+      "annotated_lines": 8
+    },
+    {
+      "path": ".github/workflows/flowforge-dispatch.yml",
+      "sha256": "5d294bc4ff7fca90985ddcf77cf4966e0ec08276c9af749846d542cd1d9f4153",
+      "lines": 23,
+      "nonblank": 20,
+      "annotated_lines": 23
+    }
+  ],
+  "total_lines": 3067,
+  "nonblank_lines": 2613
+}

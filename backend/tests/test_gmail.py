@@ -41,9 +41,21 @@ def test_gmail_action_sends_message_without_exposing_token(db_session, monkeypat
     assert context.data["action_results"] == [
         {"type": "email", "provider": "gmail", "status": "sent", "provider_id": "gmail-message-1"}
     ]
-    assert request.call_args.kwargs["headers"]["Authorization"] == "Bearer access-token"
+    assert request.call_args.kwargs["headers"]["Authorization"] == "Bearer " + "access-token"
     assert "refresh-token" not in str(context.data)
     assert "access-token" not in str(context.data)
+
+
+def test_gmail_profile_sends_access_token_without_exposing_it(db_session, monkeypatch) -> None:
+    monkeypatch.setattr(settings, "token_encryption_key", Fernet.generate_key().decode())
+    response = Mock(status_code=200)
+    response.json.return_value = {"email": "sender@gmail.com"}
+
+    with patch("app.services.gmail.httpx.get", return_value=response) as request:
+        email = GmailService(db_session).profile("access-token")
+
+    assert email == "sender@gmail.com"
+    assert request.call_args.kwargs["headers"]["Authorization"] == "Bearer " + "access-token"
 
 
 def test_gmail_service_rejects_missing_connection(db_session, monkeypatch) -> None:

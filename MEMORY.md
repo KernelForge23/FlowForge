@@ -35,6 +35,7 @@ Update this after major decisions, completed phases, or bugs that future agents 
 - Render free-tier cold starts make reliable cron unrealistic in V1
 - Generic HTTP actions need SSRF protections from day one
 - SQLite JSON + string UUIDs; switch `DATABASE_URL` to Postgres before production
+- 2026-11-01 Gmail 403 debug: Gmail OAuth profile and send requests were sending a masked placeholder instead of the decrypted bearer token. Both requests now construct the bearer header from the runtime token; focused Gmail and full backend tests pass.
 - 2026-10-06 Debug: authenticated workflow creation failed because frontend API calls omitted the Supabase bearer token; fixed token propagation and local User synchronization.
 - 2026-10-07 Production login debug: `https://flow-forge-ruddy.vercel.app/` calls the `hivvbrbucixasoorbbsd` Supabase project, while local `frontend/.env` uses `bdhhvmwxbinibiksjhnc`; production `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are mismatched or point to the wrong project. Correct the Vercel Production pair and redeploy.
 - 2026-10-07 Production project decision: use the `flowforge-production` Supabase project at `hivvbrbucixasoorbbsd.supabase.co` for production. Vercel must use this project's matching anonymous/publishable key, then redeploy and repeat the browser sign-in check.
@@ -53,3 +54,13 @@ Update this after major decisions, completed phases, or bugs that future agents 
 - [x] Core MVP flow
 - [ ] Launch checks
 - [x] Added psycopg PostgreSQL driver and updated deployment runbook for Supabase production
+
+## Latest Debug Verification
+
+- Hypothesis: the Gmail provider rejected requests because the live `Authorization` header contained the redacted placeholder rather than the OAuth access token.
+- Experiment/result: mocked profile and send requests now assert the bearer header; `pytest tests/test_gmail.py -q` passed 4 tests and `pytest -q` passed 29 tests.
+- Changed: `backend/app/services/gmail.py` and `backend/tests/test_gmail.py`.
+- Checked: focused Gmail regression tests, full backend suite, and `git diff --check`.
+- Not checked: a real Gmail send or browser journey, because that would use external credentials and send a real email.
+- Next decision: redeploy the backend, reconnect Gmail if existing authorization was created before this fix, and run one controlled test workflow.
+- Recovery: revert the two changed backend files to restore the prior implementation; no schema or data migration was made.
