@@ -3,6 +3,7 @@ from urllib.parse import parse_qs, urlparse
 from unittest.mock import Mock, patch
 
 from cryptography.fernet import Fernet
+import pytest
 
 from app.config import settings
 from app.api.auth import AuthenticatedUser, current_user
@@ -57,6 +58,32 @@ def test_gmail_profile_sends_access_token_without_exposing_it(db_session, monkey
     assert email == "sender@gmail.com"
     assert request.call_args.kwargs["headers"]["Authorization"] == "Bearer " + "access-token"
 
+
+def test_gmail_send_explains_provider_403_without_exposing_token(db_session, monkeypatch) -> None:
+    monkeypatch.setattr(settings, "token_encryption_key", Fernet.generate_key().decode())
+    user = User(email="gmail@example.com")
+    db_session.add(user)
+    db_session.flush()
+    GmailService(db_session).save_connection(
+        user.id,
+        "sender@gmail.com",
+        "access-token",
+        "refresh-token",
+        datetime.now(timezone.utc) + timedelta(hours=1),
+    )
+    response = Mock(status_code=403)
+    response.json.return_value = {
+        "error": {
+            "message": "Insufficient Permission",
+            "errors": [{"reason": "insufficientPermissions"}],
+        }
+    }
+
+    with patch("app.services.gmail.httpx.post", return_value=response):
+        with pytest.raises(RuntimeError, match="insufficientPermissions"):
+            GmailService(db_session).send(
+                user.id, ["recipient@example.com"], "Test", "Body", None
+            )
 
 def test_gmail_service_rejects_missing_connection(db_session, monkeypatch) -> None:
     monkeypatch.setattr(settings, "token_encryption_key", Fernet.generate_key().decode())

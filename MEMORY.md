@@ -36,6 +36,7 @@ Update this after major decisions, completed phases, or bugs that future agents 
 - Generic HTTP actions need SSRF protections from day one
 - SQLite JSON + string UUIDs; switch `DATABASE_URL` to Postgres before production
 - 2026-11-01 Gmail 403 debug: Gmail OAuth profile and send requests were sending a masked placeholder instead of the decrypted bearer token. Both requests now construct the bearer header from the runtime token; focused Gmail and full backend tests pass.
+- 2026-11-02 Gmail follow-up: a remaining provider 403 was still reported opaquely. Gmail send now preserves only Google's safe error message/reason and reports an actionable authorization/API-enable diagnostic; reconnecting Gmail is required when the stored token lacks the `gmail.send` scope.
 - 2026-10-06 Debug: authenticated workflow creation failed because frontend API calls omitted the Supabase bearer token; fixed token propagation and local User synchronization.
 - 2026-10-07 Production login debug: `https://flow-forge-ruddy.vercel.app/` calls the `hivvbrbucixasoorbbsd` Supabase project, while local `frontend/.env` uses `bdhhvmwxbinibiksjhnc`; production `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are mismatched or point to the wrong project. Correct the Vercel Production pair and redeploy.
 - 2026-10-07 Production project decision: use the `flowforge-production` Supabase project at `hivvbrbucixasoorbbsd.supabase.co` for production. Vercel must use this project's matching anonymous/publishable key, then redeploy and repeat the browser sign-in check.
@@ -64,3 +65,4 @@ Update this after major decisions, completed phases, or bugs that future agents 
 - Not checked: a real Gmail send or browser journey, because that would use external credentials and send a real email.
 - Next decision: redeploy the backend, reconnect Gmail if existing authorization was created before this fix, and run one controlled test workflow.
 - Recovery: revert the two changed backend files to restore the prior implementation; no schema or data migration was made.
+- Follow-up checks: `pytest tests/test_gmail.py -q` passed 5 tests; full backend `pytest -q` passed 30 tests; Python compilation passed.
